@@ -1,19 +1,42 @@
 //importar dependencia de conexion
 const {connection} = require("./database/connection");
+const express = require("express");
+const cors = require ("cors")
 
-console.log("conectado a DB")
+console.log("API Connection success")
 // efectuar conexion a BD
 connection();
 
-
 //crear conexion a servidor de node
+const app = express();
+const puerto = 3000;
 
 //configurar cors
-
+app.use(cors());
 
 //conertir los datos del body a obj js
-
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 //cargar rutas
+const UserRoutes = require("./routes/user")
+const PublicationRoutes = require("./routes/publication")
+const FollowRoutes = require("./routes/follow")
+
+app.use("/api/user" ,UserRoutes)
+app.use("/api/publication" ,PublicationRoutes)
+app.use("/api/follow" ,FollowRoutes)
+
+//ruta de prueba
+app.get('/probando',(req, res) => {
+    return res.status(200).json({
+        "id":"1",
+        "Nombre":"Francisco Alfaro",
+    })
+})
 
 //escuchar peticiones http
+
+app.listen(puerto, ()=> {
+    console.log("Server runing in port :" +puerto)
+})
