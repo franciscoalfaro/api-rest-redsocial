@@ -16,8 +16,7 @@ const createToken = (user)=>{
         role:user.role,
         imagen:user.imagen,
         iat: moment().unix(),
-        //exp:moment().add(30, "days").unix se usa para tener el tiempo de expiracion del token
-        exp:moment().add(30, "days").unix
+        exp: moment().add(30, "days").unix()
     }
     //devolver jwt token
     return jwt.encode(payload, secret_key)
