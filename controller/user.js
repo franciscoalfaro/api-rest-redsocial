@@ -129,10 +129,40 @@ const login = (req, res) =>{
 }
 
 
+const profile = async(req,res)=>{
+    //recibir parametro id por url
+    const id = req.params.id
+
+    //consulta para obtener datos del usuario
+    const userProfile = await User.findById(id)
+    User.findById(userProfile)
+        .select({"password":0,"role":0, "create_at":0})
+        .then((userProfile) => {
+            if(!userProfile) return res.status(404).json({status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO"})
+            //console.log(userProfile)
+
+            return res.status(200).json({
+                status: "success",
+                message: "profile found successfully",
+                user:userProfile
+
+            });
+                
+        }).catch((error)=>{
+            if (error) return res.status(500).send({ status: "error", message: "error al obtener el usuario en servidor" })
+            console.log(error);
+        });
+        
+}
+
+
+
+
 //
 module.exports = {
     pruebaUser,
     register,
-    login
+    login,
+    profile
 
 }
