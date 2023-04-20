@@ -156,6 +156,22 @@ const profile = async(req,res)=>{
 }
 
 
+const list = (req,res)=>{
+    //controlar la pagina actual
+
+    //consulta con mongoose paginate
+
+
+    //devolver resultado 
+
+    return res.status(200).json({
+        status: "success",
+        message: "Listado de usuarios"
+
+    });
+
+}
+
 
 
 //
@@ -163,6 +179,7 @@ module.exports = {
     pruebaUser,
     register,
     login,
-    profile
+    profile,
+    list
 
 }
