@@ -237,22 +237,28 @@ const update = (req, res) => {
 
         //se busca el usuario y se actualiza, en el caso de que exista error en el usuario a actualizar lanzara error  caso contrario actualizara
 
-        User.findByIdAndUpdate(userIdentity.id, userToUpdate,{new:true}).then(async(userUpdate)=>{
-            if(!userUpdate)return res.status(500).send({status: "error",message: "error al guardar"})
+        try{
+            let userUpdate = await User.findByIdAndUpdate(userIdentity.id,userToUpdate,{new:true})
 
-            return res.status(200).send({
+            if(!userUpdate){
+                return res.status(400).json({status: "error",message: "error al actualizar"})
+            }
+
+            return res.status(200).json({
                 status: "success",
-                message: "metodo de actualizar usuario",
-                userToUpdate
+                message: "profile update success",
+                user: userToUpdate
+    
+            });
+
+        }catch(error){
+            return res.status(500).send({ 
+                status: "error", 
+                message: "error al obtener la informacion en servidor"
             })
-
-
-        })
-
-    }).catch((error) => {
-        if (error) return res.status(500).send({ status: "error", message: "error al obtener el informacion en servidor" })
-        console.log(error);
-    });
+        }
+       
+    })
 
 }
 
