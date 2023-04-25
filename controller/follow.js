@@ -7,7 +7,21 @@ const pruebaFollow = (req, res) => {
     })
 }
 
-//
+
+//accion de seguir 
+
+
+//accion dejar de seguir 
+
+
+//accion de listado de usuarios que sigo 
+
+
+//accion de listado de usuarios que me siguen 
+
+
+
+//exportar modulo
 module.exports = {
     pruebaFollow
 }
