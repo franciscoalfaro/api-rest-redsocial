@@ -16,6 +16,6 @@ const FollowSchema =  Schema({
 
 })
 
-module = model("Follow", FollowSchema, "follows");
+module.exports = model("Follow", FollowSchema, "follows");
 
 

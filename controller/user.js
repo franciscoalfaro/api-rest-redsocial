@@ -267,7 +267,6 @@ const update = (req, res) => {
 
 //subida de imagen
 const upload = async (req, res) => {
-
     //recoger el fichero de imagen
     if (!req.file) {
         return res.status(404).send({
@@ -299,7 +298,7 @@ const upload = async (req, res) => {
     }
 
     try {
-        const ImaUpdate = await User.findOneAndUpdate(req.user.id, { imagen: req.file.filename }, { new: true })
+        const ImaUpdate = await User.findOneAndUpdate({_id:req.user.id}, { imagen: req.file.filename }, { new: true })
 
         if (!ImaUpdate) {
             return res.status(400).json({ status: "error", message: "error al actualizar" })
@@ -308,15 +307,20 @@ const upload = async (req, res) => {
         return res.status(200).json({
             status: "success",
             message: "avatar actualizado",
+            user:req.user,
             file: req.file,
-            user: req.user,
             image
         });
     } catch (error) {
-        return res.status(500).send({
-            status: "error",
-            message: "error al obtener la informacion en servidor"
-        })
+        if(error){
+            const filePath = req.file.path
+            const fileDelete = fs.unlinkSync(filePath)
+            return res.status(500).send({
+                status: "error",
+                message: "error al obtener la informacion en servidor",
+            })
+        }
+
     }
 
 }
