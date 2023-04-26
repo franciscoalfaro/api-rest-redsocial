@@ -55,7 +55,7 @@ const unfollow = async(req, res) => {
 
     //find del usuario que sigo y remover
     try {
-        const followDelete = await Follow.findOneAndRemove({"user": userId},{"followed":followedId}).then((followStored)=>{
+        const unfDelete = await Follow.findOneAndRemove({"user": userId},{"followed":followedId}).then((followStored)=>{
             return res.status(200).json({
                 status: "success",
                 message: "has dejado de seguir al usuario",
@@ -64,7 +64,7 @@ const unfollow = async(req, res) => {
             });
         })
     }catch (error) {
-        if (error || !followStored) return res.status(500).send({ status: "error", message: "error al dejar de seguir" })
+        if (error || !followDeleted) return res.status(500).send({ status: "error", message: "error al dejar de seguir" })
 
     }
 }
