@@ -68,13 +68,46 @@ const unfollow = async(req, res) => {
 
     }
 }
+//accion de listado que cualquier usuarios esta siguiendo(siguiendo)
+
+const following =(req, res) =>{
+
+    //sacar el id del usuario identificado 
+
+    //comprobar si llega por parametro la id en la url
+
+    //comprobar si llega la pagina si no mostrar pagina 1
+
+    //cuantos usuarios a mostrar por pagina
+
+    //fin a follow, popular datos de los usuarioa y paginar con mongoose
+
+    //listado de usuarios de quien sigo siendo otro usuario
+
+    // sacar un array de los id de los usuarios que me siguen y siguen al usuario que sigo. 
+
+    return res.status(200).send({
+        status: "success",
+        message: "Listado de usuarios que estoy siguiendo",
+
+    });
 
 
+}
 
-//accion de listado de usuarios que sigo 
+
+//accion de listado de usuarios que siguen cualquier otro usuario(quienes me siguen)
+
+const followers =(req, res) =>{
+
+    return res.status(200).send({
+        status: "success",
+        message: "Listado de usuarios que me siguen",
+
+    });
 
 
-//accion de listado de usuarios que me siguen 
+}
 
 
 
@@ -82,5 +115,7 @@ const unfollow = async(req, res) => {
 module.exports = {
     pruebaFollow,
     save,
-    unfollow
+    unfollow,
+    following,
+    followers
 }
