@@ -7,6 +7,8 @@ const check = require("../middlewares/auth")
 router.get("/pruebas-follow", FollowController.pruebaFollow)
 router.post("/save",check.auth, FollowController.save)
 router.delete("/unfollow/:id",check.auth, FollowController.unfollow)
+router.get("/following/:id?/", FollowController.following)
+router.get("/followers/:id?/:page?", FollowController.followers)
 
 
 //exportar router
