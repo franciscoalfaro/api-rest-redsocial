@@ -1,4 +1,6 @@
 const { Schema, model } = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 
 const FollowSchema =  Schema({
     user:{
@@ -15,6 +17,8 @@ const FollowSchema =  Schema({
     }
 
 })
+
+FollowSchema.plugin(mongoosePaginate);
 
 module.exports = model("Follow", FollowSchema, "follows");
 

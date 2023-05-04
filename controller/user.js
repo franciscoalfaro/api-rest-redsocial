@@ -1,7 +1,7 @@
 //importar dependencias y modulos
 const fs = require("fs")
 const bcrypt = require('bcrypt')
-const mongoosePagination = require('mongoose-paginate')
+const mongoosePagination = require('mongoose-paginate-v2')
 //importar modelo
 const User = require("../models/user")
 
