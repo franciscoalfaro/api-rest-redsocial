@@ -94,32 +94,32 @@ const following = async (req, res) => {
         page: page,
         limit: itemsPerPage,
         sort: { _id: -1 },
-        populate:{path:'user',path:'followed', select:'-password -role -__v'}
+        populate: { path: 'user followed', select: '-password -role -__v' }
 
     };
-    //se crea una constante para obtener los datos del objeto(modelo) y paginando la informacion obtenida
 
+    //se crea una constante para obtener los datos del objeto(modelo) y paginando la informacion obtenida
     //const consultaPaginada = await Follow.paginate({user: userId}, opciones)
 
-    Follow.paginate({user: userId}, opciones, async(error,follow, total) =>{
+    Follow.paginate({ user: userId }, opciones, async (error, follows, total) => {
 
-        let followUserIds =  await followService.followUserIds(req.user.id)
+        let followUserIds = await followService.followUserIds(req.user.id)
 
         return res.status(200).send({
             status: "success",
             message: "listado de quienes sigo",
-            follow,
+            follows,
             total,
-            user_following:followUserIds.following,
-            user_follo_me:followUserIds.followers
-     
-        
+            user_following: followUserIds.following,
+            user_follow_me: followUserIds.followers
+
+
         })
 
-    })
-
-
-
+    }).catch((error) => {
+        if (error) return res.status(500).send({ status: "error", message: "error al obtener informacion del servidor" })
+        console.log(error);
+    });
 }
 
 
@@ -127,12 +127,46 @@ const following = async (req, res) => {
 
 const followers = (req, res) => {
 
-    return res.status(200).send({
-        status: "success",
-        message: "Listado de usuarios que me siguen",
+    //sacar el id del usuario identificado
+    let userId = req.user.id;
 
+    //comprobar si llega por parametro la id en la url
+    if (req.params.id) userId = req.params.id;
+
+    //comprobar si llega la pagina si no mostrar pagina 1
+    let page = 1
+    if (req.params.page) page = req.params.page
+
+    //cuantos usuarios a mostrar por pagina
+    const itemsPerPage = 6;
+
+    //find a follow, popular datos de los usuarios y paginar con mongoose
+    const opciones = {
+        page: page,
+        limit: itemsPerPage,
+        sort: { _id: -1 },
+        populate: { path: 'user followed', select: '-password -role -__v' }
+    
+    };
+    
+    Follow.paginate({ followed: userId }, opciones, async (error, follows, total) => {
+
+        let followUserIds = await followService.followUserIds(req.user.id)
+
+        return res.status(200).send({
+            status: "success",
+            message: "listado de usuarios que me siguen",
+            follows,
+            total,
+            user_following: followUserIds.following,
+            user_follow_me: followUserIds.followers
+
+        })
+
+    }).catch((error) => {
+        if (error) return res.status(500).send({ status: "error", message: "error al obtener informacion del servidor" })
+        console.log(error);
     });
-
 
 }
 

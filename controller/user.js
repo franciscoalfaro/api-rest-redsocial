@@ -2,12 +2,15 @@
 const fs = require("fs")
 const bcrypt = require('bcrypt')
 const mongoosePagination = require('mongoose-paginate-v2')
+const path = require("path")
+
 //importar modelo
 const User = require("../models/user")
 
 //importar servicio
 const jwt = require("../services/jwt")
-const path = require("path")
+const followService = require("../services/followService")
+
 
 
 // acciones de prueba
@@ -141,14 +144,22 @@ const profile = async (req, res) => {
     const userProfile = await User.findById(id)
     User.findById(userProfile)
         .select({ "password": 0, "role": 0, "create_at": 0 })
-        .then((userProfile) => {
+        .then(async(userProfile) => {
             if (!userProfile) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
             //console.log(userProfile)
+
+
+            //info de seguimiento
+
+            const followInfo = await followService.followThisUser(req.user.id, id)
+
 
             return res.status(200).json({
                 status: "success",
                 message: "profile found successfully",
-                user: userProfile
+                user: userProfile,
+                following: followInfo.following,
+                follower : followInfo.followers
 
             });
 
@@ -176,16 +187,21 @@ const list = (req, res) => {
         sort: { _id: -1 }
     };
 
-    User.paginate({}, opciones, (error, users, total) => {
+    User.paginate({}, opciones, async(error, users, total) => {
 
         if (error || !users) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
+
+
+        let followUserIds =  await followService.followUserIds(req.user.id)
 
 
         return res.status(200).send({
             status: "success",
             message: "listado de usuarios",
             users,
-            total
+            total,
+            user_following:followUserIds.following,
+            user_follow_me:followUserIds.followers
 
         })
 
