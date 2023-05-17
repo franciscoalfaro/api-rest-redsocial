@@ -4,6 +4,10 @@ const User = require("../models/user")
 const mongoosePagination = require('mongoose-paginate-v2')
 
 
+//importar servicio
+const followService = require("../services/followService")
+
+
 const pruebaFollow = (req, res) => {
     return res.status(200).send({
         status: "success",
@@ -71,9 +75,7 @@ const unfollow = async (req, res) => {
     }
 }
 //accion de listado que cualquier usuarios esta siguiendo(siguiendo)
-
 const following = async (req, res) => {
-
     //sacar el id del usuario identificado
     let userId = req.user.id;
 
@@ -85,39 +87,36 @@ const following = async (req, res) => {
     if (req.params.page) page = req.params.page
 
     //cuantos usuarios a mostrar por pagina
-    const itemsPerPage = 5;
-    //fin a follow, popular datos de los usuarioa y paginar con mongoose
+    const itemsPerPage = 6;
 
+    //find a follow, popular datos de los usuarios y paginar con mongoose
     const opciones = {
-        id: userId,
         page: page,
         limit: itemsPerPage,
         sort: { _id: -1 },
-        populate:{path:'user',path:'followed', select:'-password'}
+        populate:{path:'user',path:'followed', select:'-password -role -__v'}
 
     };
+    //se crea una constante para obtener los datos del objeto(modelo) y paginando la informacion obtenida
 
-    const consultaPaginada = await Follow.paginate({}, opciones)
+    //const consultaPaginada = await Follow.paginate({user: userId}, opciones)
 
-    //const registroSeguidores = await Follow.find({ user: userId }).populate('user followed', "-password -role -__v");
+    Follow.paginate({user: userId}, opciones, async(error,follow, total) =>{
 
-    console.log(consultaPaginada)
+        let followUserIds =  await followService.followUserIds(req.user.id)
 
-    return res.status(200).send({
-        status: "success",
-        message: "listado de quienes sigo",
-        consultaPaginada
-
+        return res.status(200).send({
+            status: "success",
+            message: "listado de quienes sigo",
+            follow,
+            total,
+            user_following:followUserIds.following,
+            user_follo_me:followUserIds.followers
+     
+        
+        })
 
     })
-
-
-
-
-    //listado de usuarios de quien sigo siendo otro usuario
-
-    // sacar un array de los id de los usuarios que me siguen y siguen al usuario que sigo. 
-
 
 
 
