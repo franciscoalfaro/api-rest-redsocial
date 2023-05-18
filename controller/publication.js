@@ -84,8 +84,7 @@ const remove = async (req, res) => {
     }
 }
 
-//listar publicaciones
-
+//listar publicaciones de un usuario
 const user = async (req, res) => {
 
     //sacar el id del usuario
@@ -100,7 +99,7 @@ const user = async (req, res) => {
 
     const itemsPerPage = 3;
 
-    //find a follow, popular datos de los usuarios y paginar con mongoose
+    //find a follow, popular datos de los usuarios y paginar 
     const opciones = {
         page: page,
         limit: itemsPerPage,
@@ -108,7 +107,8 @@ const user = async (req, res) => {
         populate: { path: 'user', select: '-password -role -__v -email' }
     };
 
-
+    
+    //listar publicaciones de un usuario
     Publication.paginate({ "user": userId }, opciones).then((publications) => {
         if( !publications.docs||publications.docs <=0){
             return res.status(500).send({ status: "error", message: "no existen publicaciones" })
@@ -131,10 +131,69 @@ const user = async (req, res) => {
 
 }
 
-
-//listar publicaciones de un usuario
-
 //subir ficheros
+const upload = async (req, res) => {
+    //sacar publication id
+    const publicationId = req.params.id
+
+    //recoger el fichero de imagen
+    if (!req.file) {
+        return res.status(404).send({
+            status: "error",
+            message: "imagen no seleccionada"
+        })
+    }
+
+    //conseguir nombre del archivo
+    let image = req.file.originalname
+
+    //obtener extension del archivo
+    const imageSplit = image.split("\.");
+    const extension = imageSplit[1].toLowerCase();
+
+    //comprobar extension
+    if (extension != "png" && extension != "jpg" && extension != "jpeg" && extension != "gif") {
+
+        //borrar archivo y devolver respuesta en caso de que archivo no sea de extension valida.
+        const filePath = req.file.path
+        const fileDelete = fs.unlinkSync(filePath)
+
+        //devolver respuesta.        
+        return res.status(400).json({
+            status: "error",
+            mensaje: "Extension no invalida"
+        })
+
+    }
+
+    try {
+        const ImaUpdate = await Publication.findOneAndUpdate({"user":req.user.id, "_id":publicationId}, { file: req.file.filename }, { new: true })
+
+
+        if (!ImaUpdate) {
+            return res.status(400).json({ status: "error", message: "error al actualizar" })
+        }
+        //entrega respuesta corrrecta de imagen subida
+        return res.status(200).json({
+            status: "success",
+            message: "publicacion actualizada",
+            file: req.file,
+            publicationUpdate:ImaUpdate
+        });
+    } catch (error) {
+        if(error){
+            const filePath = req.file.path
+            const fileDelete = fs.unlinkSync(filePath)
+            return res.status(500).send({
+                status: "error",
+                message: "error al obtener la informacion en servidor",
+            })
+        }
+
+    }
+
+}
+
 
 //devolver archivos multimedia
 
@@ -144,5 +203,6 @@ module.exports = {
     save,
     detail,
     remove,
-    user
+    user,
+    upload
 }
