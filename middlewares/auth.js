@@ -49,7 +49,7 @@ try {
 
 
 
-//pasara ejecutcion de accion
+//pasara ejecucion de accion
 next()
 
 
