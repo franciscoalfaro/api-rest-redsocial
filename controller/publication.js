@@ -105,7 +105,7 @@ const user = async (req, res) => {
         page: page,
         limit: itemsPerPage,
         sort: { "-create_at": -1 },
-        populate: { path: 'user', select: '-password -role -__v' }
+        populate: { path: 'user', select: '-password -role -__v -email' }
     };
 
 

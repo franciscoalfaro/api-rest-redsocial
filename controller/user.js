@@ -184,7 +184,8 @@ const list = (req, res) => {
     const opciones = {
         page: page,
         limit: itemPerPage,
-        sort: { _id: -1 }
+        sort: { _id: -1 },
+        select:("-password -email -role -__v")
     };
 
     User.paginate({}, opciones, async(error, users, total) => {
