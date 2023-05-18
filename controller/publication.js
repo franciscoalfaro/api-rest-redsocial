@@ -1,3 +1,8 @@
+//importar modulos
+const fs = require("fs")
+const path = require("path")
+
+//impotar modelo
 const Publication = require("../models/publication")
 const mongoosePagination = require('mongoose-paginate-v2')
 
@@ -197,12 +202,48 @@ const upload = async (req, res) => {
 
 //devolver archivos multimedia
 
-//
+const media = (req, res) => {
+
+    //obtener parametro de la url
+    const file = req.params.file
+
+    //montar el path real de la imagen
+    const filePath = "./uploads/publications/" + file
+
+    try {
+        //comprobar si archivo existe
+        fs.stat(filePath, (error, exist) => {
+            if (!exist) {
+                return res.status(404).send({
+                    status: "error",
+                    message: "la imagen no existe"
+                })
+            }
+            //devolver archivo en el caso de existir  
+            return res.sendFile(path.resolve(filePath));
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            status: "error",
+            message: "error al obtener la informacion en servidor"
+        })
+    }
+}
+
+
+
+//listar todas la publicaciones feed
+
+
+
+//exportar modulos
 module.exports = {
     pruebaPublication,
     save,
     detail,
     remove,
     user,
-    upload
+    upload,
+    media
 }
