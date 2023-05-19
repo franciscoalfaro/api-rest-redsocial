@@ -20,7 +20,7 @@ const followUserIds = async (identityUserId) => {
         following.forEach(follow => {
             followingClean.push(follow.followed)
         });
-        console.log(followingClean)
+        //console.log(followingClean)
 
         //usuarios que me siguen
         let followerClean = [];
@@ -28,7 +28,7 @@ const followUserIds = async (identityUserId) => {
         followers.forEach(follow => {
             followerClean.push(follow.user)
         });
-        console.log(followerClean)
+        //console.log(followerClean)
 
         return {
             following: followingClean,

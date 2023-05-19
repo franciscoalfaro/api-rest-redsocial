@@ -6,6 +6,9 @@ const path = require("path")
 const Publication = require("../models/publication")
 const mongoosePagination = require('mongoose-paginate-v2')
 
+//importar servicios
+const followService = require("../services/followService")
+
 
 const pruebaPublication = (req, res) => {
     return res.status(200).send({
@@ -112,10 +115,10 @@ const user = async (req, res) => {
         populate: { path: 'user', select: '-password -role -__v -email' }
     };
 
-    
+
     //listar publicaciones de un usuario
     Publication.paginate({ "user": userId }, opciones).then((publications) => {
-        if( !publications.docs||publications.docs <=0){
+        if (!publications.docs || publications.docs <= 0) {
             return res.status(500).send({ status: "error", message: "no existen publicaciones" })
 
         }
@@ -131,7 +134,7 @@ const user = async (req, res) => {
 
     }).catch((error) => {
         if (error) return res.status(500).send({ status: "error", message: "error al obtener informacion del servidor" })
-        console.log(error);
+
     });
 
 }
@@ -172,7 +175,7 @@ const upload = async (req, res) => {
     }
 
     try {
-        const ImaUpdate = await Publication.findOneAndUpdate({"user":req.user.id, "_id":publicationId}, { file: req.file.filename }, { new: true })
+        const ImaUpdate = await Publication.findOneAndUpdate({ "user": req.user.id, "_id": publicationId }, { file: req.file.filename }, { new: true })
 
 
         if (!ImaUpdate) {
@@ -183,10 +186,10 @@ const upload = async (req, res) => {
             status: "success",
             message: "publicacion actualizada",
             file: req.file,
-            publicationUpdate:ImaUpdate
+            publicationUpdate: ImaUpdate
         });
     } catch (error) {
-        if(error){
+        if (error) {
             const filePath = req.file.path
             const fileDelete = fs.unlinkSync(filePath)
             return res.status(500).send({
@@ -235,6 +238,50 @@ const media = (req, res) => {
 
 //listar todas la publicaciones feed
 
+const feed = async (req, res) => {
+    //obtener pagina actual
+    let page = 1
+    if (req.params.page) {
+        page = req.params.page
+    }
+
+    //establecer numero de elementos por pagina
+    let itemsPerPage = 5
+
+    const opciones = {
+        page: page,
+        limit: itemsPerPage,
+        sort: { "-create_at": -1 },
+        populate: { path: 'user', select: '-password -role -__v -email' }
+    };
+
+    //obtener array de identificadores que sigo como usuario identificado
+    const myFollows = await followService.followUserIds(req.user.id);
+
+    //Find a publicaciones utilizando operador [in], ordenar pagina y popular
+    try {
+        Publication.paginate({ "user": { "$in": myFollows.following } }, opciones).then((publications) => {
+            if (!publications.docs || publications.docs <= 0) {
+                return res.status(500).send({ status: "error", message: "no existen publicaciones" })
+            }
+            return res.status(200).json({
+                status: "success",
+                message: "publicaciones feed",
+                following: myFollows.following,
+                publications
+            });
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            status: "error",
+            message: "error al obtener la informacion en servidor",
+        })
+
+    }
+
+}
+
 
 
 //exportar modulos
@@ -245,5 +292,6 @@ module.exports = {
     remove,
     user,
     upload,
-    media
+    media,
+    feed
 }
