@@ -1,10 +1,12 @@
 npn init
 npm install bcrypt
-npm install cors
-npm install express
+npm install cors --save
+npm install express --save
 npm install jwt-simple
 npm install moment
-npm install mongoose
+npm install mongoose --save
 npm install mongoose-paginate-v2
-npm install multer
-npm install validator
+npm install multer --save
+npm install validator --save
+npm install nodemon --save-dev
+npm install dotenv
