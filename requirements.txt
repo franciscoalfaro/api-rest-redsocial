@@ -1,0 +1,10 @@
+npn init
+npm install bcrypt
+npm install cors
+npm install express
+npm install jwt-simple
+npm install moment
+npm install mongoose
+npm install mongoose-paginate-v2
+npm install multer
+npm install validator
