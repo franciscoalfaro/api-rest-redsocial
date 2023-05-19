@@ -1,4 +1,4 @@
-npn init
+npm init
 npm install bcrypt
 npm install cors --save
 npm install express --save
