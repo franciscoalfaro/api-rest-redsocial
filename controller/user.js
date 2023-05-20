@@ -53,7 +53,7 @@ const register = (req, res) => {
     }).then(async (users) => {
         if (users && users.length >= 1) {
             return res.status(200).send({
-                status: "success",
+                status: "warning",
                 message: "El usuario ya existe",
             });
         }
@@ -124,7 +124,8 @@ const login = (req, res) => {
                 user: {
                     id: user._id,
                     name: user.name,
-                    nick: user.nick
+                    nick: user.nick,
+
                 },
                 token
 
