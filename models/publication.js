@@ -15,16 +15,7 @@ const PublicationSchema = Schema({
     create_at:{
         type:Date,
         default:Date.now
-    },
-    megusta:{
-        type:String,
-        default:0
-    },
-    nomegusta:{
-        type:String,
-        default:0
     }
-
 
 })
 
