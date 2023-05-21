@@ -17,11 +17,11 @@ const PublicationSchema = Schema({
         default:Date.now
     },
     megusta:{
-        type:Number,
+        type:String,
         default:0
     },
     nomegusta:{
-        type:Number,
+        type:String,
         default:0
     }
 
