@@ -245,7 +245,7 @@ const update = (req, res) => {
 
         if (userIsset) {
             return res.status(200).send({
-                status: "success",
+                status: "warning",
                 message: "El usuario ya existe"
             });
 

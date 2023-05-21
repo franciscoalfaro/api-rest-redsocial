@@ -4,7 +4,7 @@ const followUserIds = async (identityUserId) => {
 
     try {
 
-        //obetner informacion de quienes sigo 
+        //obetner informacion de quienes sigo
         let following = await Follow.find({ "user": identityUserId })
             .select({ "followed": 1, "_id": 0 })
             .exec()
