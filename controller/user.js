@@ -87,7 +87,7 @@ const login = (req, res) => {
 
     if (!params.email || !params.password) {
         return res.status(400).send({
-            status: "error",
+            status: "error_404",
             message: "faltan datos por enviar"
         })
     }
@@ -96,7 +96,7 @@ const login = (req, res) => {
     User.findOne({ email: params.email })
         //.select({"create_at":0})
         .then((user) => {
-            if (!user) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
+            if (!user) return res.status(404).json({ status: "Not Found", message: "Usuario no registrado" })
             console.log(user)
 
 
@@ -105,7 +105,7 @@ const login = (req, res) => {
 
             if (!pwd) {
                 return res.status(400).send({
-                    error: "error",
+                    error: "Error_pass",
                     message: "No te has identificado de forma correcta. "
 
                 })
@@ -287,13 +287,13 @@ const update = (req, res) => {
 
 }
 
-//subida de imagen
+//subida de image
 const upload = async (req, res) => {
-    //recoger el fichero de imagen
+    //recoger el fichero de image
     if (!req.file) {
         return res.status(404).send({
             status: "error",
-            message: "imagen no seleccionada"
+            message: "image no seleccionada"
         })
     }
 
@@ -320,12 +320,12 @@ const upload = async (req, res) => {
     }
 
     try {
-        const ImaUpdate = await User.findOneAndUpdate({_id:req.user.id}, { imagen: req.file.filename }, { new: true })
+        const ImaUpdate = await User.findOneAndUpdate(req.user.id, { image: req.file.filename }, { new: true })
 
         if (!ImaUpdate) {
             return res.status(400).json({ status: "error", message: "error al actualizar" })
         }
-        //entrega respuesta corrrecta de imagen subida
+        //entrega respuesta corrrecta de image subida
         return res.status(200).json({
             status: "success",
             message: "avatar actualizado",
@@ -355,7 +355,7 @@ const avatar = (req, res) => {
     //obtener parametro de la url
     const file = req.params.file
 
-    //montar el path real de la imagen
+    //montar el path real de la image
     const filePath = "./uploads/avatars/" + file
 
     try {
@@ -364,7 +364,7 @@ const avatar = (req, res) => {
             if (!exist) {
                 return res.status(404).send({
                     status: "error",
-                    message: "la imagen no existe"
+                    message: "la image no existe"
                 })
             }
             //devolver archivo en el caso de existir  

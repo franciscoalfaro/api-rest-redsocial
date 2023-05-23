@@ -144,11 +144,11 @@ const upload = async (req, res) => {
     //sacar publication id
     const publicationId = req.params.id
 
-    //recoger el fichero de imagen
+    //recoger el fichero de image
     if (!req.file) {
         return res.status(404).send({
             status: "error",
-            message: "imagen no seleccionada"
+            message: "image no seleccionada"
         })
     }
 
@@ -181,7 +181,7 @@ const upload = async (req, res) => {
         if (!ImaUpdate) {
             return res.status(400).json({ status: "error", message: "error al actualizar" })
         }
-        //entrega respuesta corrrecta de imagen subida
+        //entrega respuesta corrrecta de image subida
         return res.status(200).json({
             status: "success",
             message: "publicacion actualizada",
@@ -210,7 +210,7 @@ const media = (req, res) => {
     //obtener parametro de la url
     const file = req.params.file
 
-    //montar el path real de la imagen
+    //montar el path real de la image
     const filePath = "./uploads/publications/" + file
 
     try {
@@ -219,7 +219,7 @@ const media = (req, res) => {
             if (!exist) {
                 return res.status(404).send({
                     status: "error",
-                    message: "la imagen no existe"
+                    message: "la image no existe"
                 })
             }
             //devolver archivo en el caso de existir  
