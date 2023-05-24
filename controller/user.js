@@ -202,8 +202,11 @@ const list = (req, res) => {
         return res.status(200).send({
             status: "success",
             message: "listado de usuarios",
-            users,
-            total,
+            users:users.docs,
+            total:users.totalPages,
+            totalDocs:users.totalDocs,
+            itempage:users.limit,
+            page:users.page,
             user_following:followUserIds.following,
             user_follow_me:followUserIds.followers
 
@@ -320,7 +323,7 @@ const upload = async (req, res) => {
     }
 
     try {
-        const ImaUpdate = await User.findOneAndUpdate(req.user.id, { image: req.file.filename }, { new: true })
+        const ImaUpdate = await User.findOneAndUpdate({_id:req.user.id}, { image: req.file.filename }, { new: true })
 
         if (!ImaUpdate) {
             return res.status(400).json({ status: "error", message: "error al actualizar" })
