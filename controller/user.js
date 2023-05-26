@@ -182,7 +182,7 @@ const list = (req, res) => {
     }
     page = parseInt(page)
 
-    let itemPerPage = 5
+    let itemPerPage = 6
 
     const opciones = {
         page: page,
@@ -197,13 +197,13 @@ const list = (req, res) => {
 
 
         let followUserIds =  await followService.followUserIds(req.user.id)
-
+        //se cambia total por pages total:users.totalPages,
 
         return res.status(200).send({
             status: "success",
             message: "listado de usuarios",
             users:users.docs,
-            total:users.totalPages,
+            pages:users.totalPages,
             totalDocs:users.totalDocs,
             itempage:users.limit,
             page:users.page,
