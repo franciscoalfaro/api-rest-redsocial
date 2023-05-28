@@ -29,7 +29,7 @@ const validate = (params) => {
         }
 
     }
-    if (!name || !surname || !nick || !email || !password || !bio) {
+    if (!name || !surname || !nick || !email || !password) {
         throw new Error("No se ha superado validacion")
 
     } else {
