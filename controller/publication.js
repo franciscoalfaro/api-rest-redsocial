@@ -129,7 +129,7 @@ const user = async (req, res) => {
             message: "publicaciones del perfil de un usuario",
             page: publications.page,
             total: publications.totalDocs,
-            publications
+            publications:publications.docs
         });
 
     }).catch((error) => {
@@ -251,7 +251,7 @@ const feed = async (req, res) => {
     const opciones = {
         page: page,
         limit: itemsPerPage,
-        sort: { "-create_at": -1 },
+        sort: { "create_at": 1 },
         populate: { path: 'user', select: '-password -role -__v -email' }
     };
 
@@ -268,7 +268,9 @@ const feed = async (req, res) => {
                 status: "success",
                 message: "publicaciones feed",
                 following: myFollows.following,
-                publications
+                page: publications.page,
+                total: publications.totalDocs,
+                publications:publications.docs
             });
         })
 
