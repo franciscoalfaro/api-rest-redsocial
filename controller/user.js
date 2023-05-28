@@ -12,6 +12,7 @@ const Publication = require("../models/publication")
 //importar servicio
 const jwt = require("../services/jwt")
 const followService = require("../services/followService")
+const validate = require("../helpers/validate")
 
 
 
@@ -39,12 +40,23 @@ const register = (req, res) => {
             message: "faltan datos por enviar"
         })
     }
-    //crear el obj usuario
-    let user_to_save = new User(params);
-    console.log(user_to_save)
+
+    try {
+        validate.validate(params)
+        
+    } catch (error) {
+        return res.status(400).json({
+            status: "error",
+            message: "Validacion no superada",
+        })
+
+        
+    }
+
+    
+
 
     //consultar si usuario existe en la BD para ser guardado, en el caso de existir indicara que el nick y correo ya existen 
-
     User.find({
         $or: [
             { email: params.email.toLowerCase() },
