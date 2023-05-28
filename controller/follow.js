@@ -87,7 +87,7 @@ const following = async (req, res) => {
     if (req.params.page) page = req.params.page
 
     //cuantos usuarios a mostrar por pagina
-    const itemsPerPage = 6;
+    const itemsPerPage = 5;
 
     //find a follow, popular datos de los usuarios y paginar con mongoose
     const opciones = {
@@ -108,8 +108,10 @@ const following = async (req, res) => {
         return res.status(200).send({
             status: "success",
             message: "listado de quienes sigo",
-            follows,
-            total,
+            follow:follows.docs,
+            pages:follows.totalPages,
+            totalDocs:follows.totalDocs,
+            itempage:follows.limit,
             user_following: followUserIds.following,
             user_follow_me: followUserIds.followers
 
@@ -138,7 +140,7 @@ const followers = (req, res) => {
     if (req.params.page) page = req.params.page
 
     //cuantos usuarios a mostrar por pagina
-    const itemsPerPage = 6;
+    const itemsPerPage = 5;
 
     //find a follow, popular datos de los usuarios y paginar con mongoose
     const opciones = {
@@ -156,8 +158,10 @@ const followers = (req, res) => {
         return res.status(200).send({
             status: "success",
             message: "listado de usuarios que me siguen",
-            follows,
-            total,
+            follow:follows.docs,
+            pages:follows.totalPages,
+            totalDocs:follows.totalDocs,
+            itempage:follows.limit,
             user_following: followUserIds.following,
             user_follow_me: followUserIds.followers
 

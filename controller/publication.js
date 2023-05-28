@@ -30,15 +30,15 @@ const save = (req, res) => {
     let newPublication = new Publication(params)
     newPublication.user = req.user.id
 
-    newPublication.save().then((publicacionStored) => {
+    newPublication.save().then((publicationStored) => {
         //Devolver el resultado
         return res.status(200).json({
             status: "success",
             message: "publicacion guardada de forma correcta",
-            publicacionStored,
+            publicationStored,
         });
     }).catch((error) => {
-        if (error || !publicacionStored) return res.status(500).send({ status: "error", message: "error al guardar la publicacion" })
+        if (error || !publicationStored) return res.status(500).send({ status: "error", message: "error al guardar la publicacion" })
     })
 
 }
