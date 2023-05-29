@@ -92,6 +92,7 @@ const register = (req, res) => {
     })
 }
 
+//Login de usuario
 const login = (req, res) => {
 
     let params = req.body;
@@ -150,7 +151,7 @@ const login = (req, res) => {
 
 }
 
-
+// perfil de usuario
 const profile = async (req, res) => {
     //recibir parametro id por url
     const id = req.params.id
@@ -185,7 +186,7 @@ const profile = async (req, res) => {
 
 }
 
-
+//listar usuario
 const list = (req, res) => {
     let page = 1
 
@@ -428,6 +429,28 @@ const counters = async (req, res) => {
 }
 
 
+//eliminar usuario/cuenta
+const remove = async (req, res) => {
+    //obtener id de la publicacion
+    const userId = req.params.id;
+
+    //buscar la publicacion comparando el id del usuario con el id de la publicacion y borrarlo
+
+    try {
+        const userDelete = await User.findOneAndRemove({"_id": userId }).then((userId) => {
+            return res.status(200).json({
+                status: "success",
+                message: "usuario eliminado",
+                user: userId
+            });
+        })
+    } catch (error) {
+        if (error || !userId) return res.status(500).send({ status: "error", message: "error al eliminar usuario" })
+
+    }
+}
+
+
 
 //
 module.exports = {
@@ -439,6 +462,7 @@ module.exports = {
     update,
     upload,
     avatar,
-    counters
+    counters,
+    remove
 
 }

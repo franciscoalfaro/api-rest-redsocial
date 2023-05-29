@@ -29,6 +29,7 @@ router.put("/update",check.auth, UserController.update)
 router.post("/upload",[check.auth, uploads.single("file0")], UserController.upload)
 router.get("/avatar/:file", UserController.avatar)
 router.get("/counters/:id", check.auth, UserController.counters);
+router.delete("/delete/:id", check.auth, UserController.remove)
 
 
 
