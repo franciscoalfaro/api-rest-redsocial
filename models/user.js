@@ -32,6 +32,10 @@ const UserSchema = Schema({
         type:String,
         default:"default.png"
     },
+    eliminado:{
+        type: Boolean,
+        default: false
+    },
     create_at:{
         type:Date,
         default:Date.now

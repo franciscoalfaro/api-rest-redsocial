@@ -43,17 +43,17 @@ const register = (req, res) => {
 
     try {
         validate.validate(params)
-        
+
     } catch (error) {
         return res.status(400).json({
             status: "error",
             message: "Validacion no superada",
         })
 
-        
+
     }
 
-    
+
 
 
     //consultar si usuario existe en la BD para ser guardado, en el caso de existir indicara que el nick y correo ya existen 
@@ -160,7 +160,7 @@ const profile = async (req, res) => {
     const userProfile = await User.findById(id)
     User.findById(userProfile)
         .select({ "password": 0, "role": 0, "create_at": 0 })
-        .then(async(userProfile) => {
+        .then(async (userProfile) => {
             if (!userProfile) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
             //console.log(userProfile)
 
@@ -175,7 +175,7 @@ const profile = async (req, res) => {
                 message: "profile found successfully",
                 user: userProfile,
                 following: followInfo.following,
-                follower : followInfo.followers
+                follower: followInfo.followers
 
             });
 
@@ -201,27 +201,27 @@ const list = (req, res) => {
         page: page,
         limit: itemPerPage,
         sort: { _id: -1 },
-        select:("-password -email -role -__v")
+        select: ("-password -email -role -__v")
     };
 
-    User.paginate({}, opciones, async(error, users, total) => {
+    User.paginate({}, opciones, async (error, users, total) => {
 
         if (error || !users) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
 
 
-        let followUserIds =  await followService.followUserIds(req.user.id)
+        let followUserIds = await followService.followUserIds(req.user.id)
         //se cambia total por pages total:users.totalPages,
 
         return res.status(200).send({
             status: "success",
             message: "listado de usuarios",
-            users:users.docs,
-            pages:users.totalPages,
-            totalDocs:users.totalDocs,
-            itempage:users.limit,
-            page:users.page,
-            user_following:followUserIds.following,
-            user_follow_me:followUserIds.followers
+            users: users.docs,
+            pages: users.totalPages,
+            totalDocs: users.totalDocs,
+            itempage: users.limit,
+            page: users.page,
+            user_following: followUserIds.following,
+            user_follow_me: followUserIds.followers
 
         })
 
@@ -272,7 +272,7 @@ const update = (req, res) => {
             //Cifrar la contraseña con bcrypt
             let pwd = await bcrypt.hash(userToUpdate.password, 10);
             userToUpdate.password = pwd;
-        }else{
+        } else {
             delete userToUpdate.password
         }
 
@@ -336,7 +336,7 @@ const upload = async (req, res) => {
     }
 
     try {
-        const ImaUpdate = await User.findOneAndUpdate({_id:req.user.id}, { image: req.file.filename }, { new: true })
+        const ImaUpdate = await User.findOneAndUpdate({ _id: req.user.id }, { image: req.file.filename }, { new: true })
 
         if (!ImaUpdate) {
             return res.status(400).json({ status: "error", message: "error al actualizar" })
@@ -345,12 +345,12 @@ const upload = async (req, res) => {
         return res.status(200).json({
             status: "success",
             message: "avatar actualizado",
-            user:req.user,
+            user: req.user,
             file: req.file,
             image
         });
     } catch (error) {
-        if(error){
+        if (error) {
             const filePath = req.file.path
             const fileDelete = fs.unlinkSync(filePath)
             return res.status(500).send({
@@ -431,24 +431,33 @@ const counters = async (req, res) => {
 
 //eliminar usuario/cuenta
 const remove = async (req, res) => {
-    //obtener id de la publicacion
-    const userId = req.params.id;
-
-    //buscar la publicacion comparando el id del usuario con el id de la publicacion y borrarlo
-
     try {
-        const userDelete = await User.findOneAndRemove({"_id": userId }).then((userId) => {
+        // Obtener el ID del usuario
+        const userId = req.params.id;
+
+        // Eliminacion del usuario de forma logica - se modifica el modelo para agregar el campo eliminado por defecto en false
+        const userDelete = await User.findByIdAndUpdate(userId, { eliminado: true });
+
+        if (userDelete) {
             return res.status(200).json({
                 status: "success",
-                message: "usuario eliminado",
-                user: userId
+                message: "Usuario eliminado",
+                user: userDelete
             });
-        })
+        } else {
+            return res.status(404).json({
+                status: "error",
+                message: "Usuario no encontrado"
+            });
+        }
     } catch (error) {
-        if (error || !userId) return res.status(500).send({ status: "error", message: "error al eliminar usuario" })
-
+        return res.status(500).json({
+            status: "error",
+            message: "Error al eliminar usuario",
+            error: error.message
+        });
     }
-}
+};
 
 
 
