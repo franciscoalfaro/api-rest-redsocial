@@ -96,7 +96,6 @@ const register = (req, res) => {
 const login = (req, res) => {
 
     let params = req.body;
-    console.log(params)
 
     if (!params.email || !params.password) {
         return res.status(400).send({
@@ -104,15 +103,11 @@ const login = (req, res) => {
             message: "faltan datos por enviar"
         })
     }
-
     //buscar a ususario en la BD  .select({"password":0}) oculta la pass del resultado
     User.findOne({ email: params.email })
-        //.select({"create_at":0})
         .then((user) => {
             if (!user) return res.status(404).json({ status: "Not Found", message: "Usuario no registrado" })
-            console.log(user)
-
-
+ 
             //comprobar password que llega por el body y con la password del usuario de la BD
             const pwd = bcrypt.compareSync(params.password, user.password)
 
@@ -124,13 +119,18 @@ const login = (req, res) => {
                 })
             }
 
+            //si usuario con cuenta desactivada se loguea nuevamente se cambia estado de cuenta desactivada=true a cuenta desactivada=false
+            user.eliminado = false;
+            // guardar el usuario actualizado en la BD
+            user.save();            
+
+
             //devolver token
             const token = jwt.createToken(user)
 
             // eliminar pass del obj
 
             //devolver datos del usuario
-
             return res.status(200).json({
                 status: "success",
                 message: "Te has identificado de forma correcta.",
@@ -138,11 +138,11 @@ const login = (req, res) => {
                     id: user._id,
                     name: user.name,
                     nick: user.nick,
-
                 },
-                token
+                token,                
 
             });
+
 
         }).catch((error) => {
             if (error) return res.status(500).send({ status: "error", message: "error al obtener el usuario en servidor" })
@@ -156,33 +156,40 @@ const profile = async (req, res) => {
     //recibir parametro id por url
     const id = req.params.id
 
-    //consulta para obtener datos del usuario
-    const userProfile = await User.findById(id)
-    User.findById(userProfile)
-        .select({ "password": 0, "role": 0, "create_at": 0 })
-        .then(async (userProfile) => {
-            if (!userProfile) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
-            //console.log(userProfile)
+    try {
+        //consulta para obtener datos del usuario
+        const userProfile = await User.findById(id)
+        User.findById(userProfile)
+            .select({ "password": 0, "role": 0, "create_at": 0 })
+            .then(async (userProfile) => {
+                if (!userProfile) return res.status(404).json({ status: "Error", message: "NO SE HA ENCONTRADO EL USUARIO" })
+                //console.log(userProfile)
 
 
-            //info de seguimiento
+                //info de seguimiento
 
-            const followInfo = await followService.followThisUser(req.user.id, id)
+                const followInfo = await followService.followThisUser(req.user.id, id)
 
 
-            return res.status(200).json({
-                status: "success",
-                message: "profile found successfully",
-                user: userProfile,
-                following: followInfo.following,
-                follower: followInfo.followers
+                return res.status(200).json({
+                    status: "success",
+                    message: "profile found successfully",
+                    user: userProfile,
+                    eliminado: userProfile.eliminado,
+                    following: followInfo.following,
+                    follower: followInfo.followers
 
-            });
+                });
 
-        }).catch((error) => {
-            if (error) return res.status(500).send({ status: "error", message: "error al obtener el usuario en servidor" })
-            console.log(error);
-        });
+            })
+
+    } catch (error) {
+        if (error) return res.status(500).send({ status: "error", message: "error al obtener el usuario en servidor" })
+        console.log(error);
+
+    }
+
+
 
 }
 
@@ -225,7 +232,10 @@ const list = (req, res) => {
 
         })
 
-    })
+    }).catch((error) => {
+        if (error) return res.status(500).send({ status: "error", message: "error al obtener el usuario en servidor" })
+        console.log(error);
+    });
 }
 
 //actualizar datos del usuario
@@ -289,6 +299,7 @@ const update = (req, res) => {
                 status: "success",
                 message: "profile update success",
                 user: userToUpdate
+
 
             });
 
@@ -437,6 +448,7 @@ const remove = async (req, res) => {
 
         // Eliminacion del usuario de forma logica - se modifica el modelo para agregar el campo eliminado por defecto en false
         const userDelete = await User.findByIdAndUpdate(userId, { eliminado: true });
+
 
         if (userDelete) {
             return res.status(200).json({
