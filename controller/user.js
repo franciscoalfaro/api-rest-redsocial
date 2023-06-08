@@ -175,7 +175,6 @@ const profile = async (req, res) => {
                     status: "success",
                     message: "profile found successfully",
                     user: userProfile,
-                    eliminado: userProfile.eliminado,
                     following: followInfo.following,
                     follower: followInfo.followers
 
