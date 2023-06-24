@@ -29,6 +29,9 @@ router.get("/user/:id/:page?",check.auth, PublicationController.user)
 router.post("/upload/:id",[check.auth, uploads.single("file0")], PublicationController.upload)
 router.get("/media/:file", PublicationController.media)
 router.get("/feed/:page?", check.auth, PublicationController.feed)
+router.post("/savecomment/:id",check.auth, PublicationController.comment )
+router.delete("/deletecomment/:id", check.auth, PublicationController.removeComment)
+router.get("/comment/:id/:page?",check.auth, PublicationController.listCommen )
 
 //exportar router
 module.exports=router
