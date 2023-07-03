@@ -471,7 +471,7 @@ const remove = async (req, res) => {
 };
 
 
-
+//end-point para buscar persona
 const searchPeople = (req, res) => {
 
     //sacar el string de la busqueda
@@ -485,10 +485,9 @@ const searchPeople = (req, res) => {
                 { "surname": { "$regex": busqueda, "$options": "i" } },
                 { "nick": { "$regex": busqueda, "$options": "i" } },
             ]
-        })
+        },{password:0 , email:0 , role:0, __v:0})
             .sort({ fecha: -1 })
             .then(async (personaEncontrada) => {
-                console.log(personaEncontrada)
                 if (!personaEncontrada || personaEncontrada.length <= 0) {
                     return res.status(404).json({
                         status: "error",
@@ -498,7 +497,7 @@ const searchPeople = (req, res) => {
 
                 return res.status(200).json({
                     status: "success",
-                    persona: personaEncontrada
+                    person: personaEncontrada
                 })
 
             })
