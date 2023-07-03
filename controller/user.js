@@ -107,7 +107,7 @@ const login = (req, res) => {
     User.findOne({ email: params.email })
         .then((user) => {
             if (!user) return res.status(404).json({ status: "Not Found", message: "Usuario no registrado" })
- 
+
             //comprobar password que llega por el body y con la password del usuario de la BD
             const pwd = bcrypt.compareSync(params.password, user.password)
 
@@ -122,7 +122,7 @@ const login = (req, res) => {
             //si usuario con cuenta desactivada se loguea nuevamente se cambia estado de cuenta desactivada=true a cuenta desactivada=false
             user.eliminado = false;
             // guardar el usuario actualizado en la BD
-            user.save();            
+            user.save();
 
 
             //devolver token
@@ -139,7 +139,7 @@ const login = (req, res) => {
                     name: user.name,
                     nick: user.nick,
                 },
-                token,                
+                token,
 
             });
 
@@ -472,6 +472,53 @@ const remove = async (req, res) => {
 
 
 
+const searchPeople = (req, res) => {
+
+    //sacar el string de la busqueda
+    let busqueda = req.params.searchpeople;
+
+    try {
+        // Find OR
+        User.find({
+            "$or": [
+                { "name": { "$regex": busqueda, "$options": "i" } },
+                { "surname": { "$regex": busqueda, "$options": "i" } },
+                { "nick": { "$regex": busqueda, "$options": "i" } },
+            ]
+        })
+            .sort({ fecha: -1 })
+            .then(async (personaEncontrada) => {
+                console.log(personaEncontrada)
+                if (!personaEncontrada || personaEncontrada.length <= 0) {
+                    return res.status(404).json({
+                        status: "error",
+                        mensaje: "no se han encontrado Personas"
+                    });
+                }
+
+                return res.status(200).json({
+                    status: "success",
+                    persona: personaEncontrada
+                })
+
+            })
+
+
+    } catch (error) {
+        return res.status(404).json({
+            status: "error",
+            mensaje: "error en conexion con el servidor"
+        });
+
+    }
+
+
+
+
+}
+
+
+
 //
 module.exports = {
     pruebaUser,
@@ -483,6 +530,7 @@ module.exports = {
     upload,
     avatar,
     counters,
-    remove
+    remove,
+    searchPeople
 
 }

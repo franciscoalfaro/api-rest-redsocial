@@ -30,6 +30,7 @@ router.post("/upload",[check.auth, uploads.single("file0")], UserController.uplo
 router.get("/avatar/:file", UserController.avatar)
 router.get("/counters/:id", check.auth, UserController.counters);
 router.delete("/delete/:id", check.auth, UserController.remove)
+router.get("/search/:searchpeople", check.auth, UserController.searchPeople);
 
 
 
