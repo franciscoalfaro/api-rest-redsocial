@@ -477,6 +477,17 @@ const searchPeople = (req, res) => {
     let page = req.params.page || 1;
     let limit = 10;
 
+    const inputString = busqueda;
+    const spaceIndex = inputString.indexOf(' ');
+    
+    let result = '';
+    
+    if (spaceIndex !== -1) {
+      result = inputString.substring(0, spaceIndex);
+    } else {
+      result = inputString;
+    }
+
     try {
         const opciones = {
             page: page,
@@ -489,8 +500,8 @@ const searchPeople = (req, res) => {
         User.paginate(
             {
                 "$or": [
-                    { "name": { "$regex": busqueda, "$options": "i" } },
-                    { "surname": { "$regex": busqueda, "$options": "i" } }
+                    { "name": { "$regex": result, "$options": "i" } },
+                    { "surname": { "$regex": result, "$options": "i" } }
                 ]
             },
             opciones
