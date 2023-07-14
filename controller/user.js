@@ -473,49 +473,52 @@ const remove = async (req, res) => {
 
 //end-point para buscar persona
 const searchPeople = (req, res) => {
-
-    //sacar el string de la busqueda
     let busqueda = req.params.searchpeople;
+    let page = req.params.page || 1;
+    let limit = 10;
 
     try {
+        const opciones = {
+            page: page,
+            limit: limit,
+            sort: { create_at: -1 },
+            select: ("-password -email -role -__v")
+        };
+
         // Find OR
-        User.find({
-            "$or": [
-                { "name": { "$regex": busqueda, "$options": "i" } },
-                { "surname": { "$regex": busqueda, "$options": "i" } },
-                { "nick": { "$regex": busqueda, "$options": "i" } },
-            ]
-        },{password:0 , email:0 , role:0, __v:0})
-            .sort({ fecha: -1 })
-            .then(async (personaEncontrada) => {
-                if (!personaEncontrada || personaEncontrada.length <= 0) {
+        User.paginate(
+            {
+                "$or": [
+                    { "name": { "$regex": busqueda, "$options": "i" } },
+                    { "surname": { "$regex": busqueda, "$options": "i" } }
+                ]
+            },
+            opciones
+        )
+            .then((result) => {
+                if (result.docs.length === 0) {
                     return res.status(404).json({
                         status: "error",
-                        mensaje: "no se han encontrado Personas"
+                        mensaje: "No se han encontrado personas"
                     });
                 }
 
                 return res.status(200).json({
                     status: "success",
-                    person: personaEncontrada
-                })
-
-            })
-
-
+                    total: result.totalDocs,
+                    currentPage: result.page,
+                    totalPages: result.totalPages,
+                    person: result.docs
+                });
+            });
     } catch (error) {
-        return res.status(404).json({
+        console.log(error)
+        return res.status(500).json({
             status: "error",
-            mensaje: "error en conexion con el servidor"
+            mensaje: "Error en conexión con el servidor"
         });
-
     }
-
-
-
-
-}
-
+};
 
 
 //
