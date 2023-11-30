@@ -55,9 +55,11 @@ const save = (req, res) => {
 const unfollow = async (req, res) => {
     //recoger id del usuario identificado
     const userId = req.user.id
+    console.log('el id',userId)
 
     //recoger el id del usuario que sigo y dejar de seguir
     const followedId = req.params.id
+    console.log(followedId)
 
     //find del usuario que sigo y remover
     try {

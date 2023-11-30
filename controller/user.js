@@ -73,6 +73,7 @@ const register = (req, res) => {
         //Cifrar la contraseña con bcrypt
         let pwd = await bcrypt.hash(params.password, 10);
         params.password = pwd;
+        
 
         //Crear objeto  de usuario para guardar en la BD
         let user_to_save = new User(params);
@@ -96,6 +97,7 @@ const register = (req, res) => {
 const login = (req, res) => {
 
     let params = req.body;
+    console.log(params)
 
     if (!params.email || !params.password) {
         return res.status(400).send({

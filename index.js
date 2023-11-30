@@ -22,10 +22,14 @@ app.use(express.urlencoded({extended:true}));
 const UserRoutes = require("./routes/user")
 const PublicationRoutes = require("./routes/publication")
 const FollowRoutes = require("./routes/follow")
+const LikeRoutes = require("./routes/like")
+const RecoveryRouter = require("./routes/recovery")
 
 app.use("/api/user" ,UserRoutes)
 app.use("/api/publication" ,PublicationRoutes)
 app.use("/api/follow" ,FollowRoutes)
+app.use("/api/like", LikeRoutes)
+app.use("/api/recovery", RecoveryRouter)
 
 //ruta de prueba
 app.get('/probando',(req, res) => {
