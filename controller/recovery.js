@@ -1,3 +1,4 @@
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const nodemailer = require('nodemailer');
@@ -55,13 +56,15 @@ function generarNuevaContrasena() {
 
 // Función para enviar correo de recuperación utilizando IONOS SMTP
 async function enviarCorreoRecuperacion(email, nuevaContrasena) {
+    const emailUser = process.env.EMAIL_USER;
+    const emailPassword = process.env.EMAIL_PASSWORD;
     const transporter = nodemailer.createTransport({
         host: 'smtp.ionos.com',
         port: 587,
         secure: false,
         auth: {
-            user: 'suport@testsocial.org', // Cambia con tu dirección de correo de IONOS 
-            pass: '**correosoporte**_44' // Cambia con tu contraseña
+            user: emailUser, // Cambia con tu dirección de correo de IONOS 
+            pass: emailPassword // Cambia con tu contraseña
         }
     });
 
