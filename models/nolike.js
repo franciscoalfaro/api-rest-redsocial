@@ -1,7 +1,7 @@
 const {Schema, model} = require("mongoose")
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const LikeSchema = Schema ({
+const NoLikeSchema = Schema ({
     user:{
         type:Schema.ObjectId,
         ref:"User"
@@ -17,7 +17,7 @@ const LikeSchema = Schema ({
 
 })
 
-LikeSchema.plugin(mongoosePaginate);
+NoLikeSchema.plugin(mongoosePaginate);
 
 
-module.exports = model("Like", LikeSchema, "likes");
+module.exports = model("NoLike", NoLikeSchema, "nolikes");

@@ -33,5 +33,9 @@ router.post("/savecomment/:id",check.auth, PublicationController.comment )
 router.delete("/deletecomment/:id", check.auth, PublicationController.removeComment)
 router.get("/comment/:id/:page?",check.auth, PublicationController.listCommen )
 
+router.post("/like/:id", check.auth, PublicationController.likePublication)
+router.post("/nolike/:id", check.auth, PublicationController.unlike)
+router.delete("/unlike/:id", check.auth, PublicationController.deleteLike)
+
 //exportar router
 module.exports=router
