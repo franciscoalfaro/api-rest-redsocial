@@ -11,12 +11,6 @@ const PublicationSchema = Schema({
         required: true
     },
     file: String,
-    likes: [
-        {
-            type: Schema.ObjectId,
-            ref: "User" // Hace referencia al modelo de usuarios para almacenar los IDs de los usuarios que dieron "me gusta"
-        }
-    ],
     create_at: {
         type: Date,
         default: Date.now

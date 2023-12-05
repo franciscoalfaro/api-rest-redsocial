@@ -38,20 +38,20 @@ const likePublication = async (req, res) => {
     }
 }
 
-//este end-poit guarda los no me gusta o nolike del modelo nolike
+//este end-poit guarda los no me gusta
 const unlike = async(req, res)=>{
     try {
         const publicationId = req.params.id;
         const userId = req.user.id; // Suponiendo que recibes el ID del usuario que da like
 
         // Verificar si el usuario ya dio like a la publicación
-        const existingLike = await NoLike.findOne({user: userId, liked:publicationId });
+        const existingLike = await NoLike.findOne({user: userId, noliked:publicationId });
         if (existingLike) {
             return res.status(400).json({ status: "error", message: "El usuario ya dio no me gusta a esta publicación" });
         }
 
         // Crear nuevo no me gusta
-        const newLike = new NoLike({ liked: publicationId, user: userId });
+        const newLike = new NoLike({ noliked: publicationId, user: userId });
         await newLike.save();
 
         return res.status(200).json({ status: "success", message: "no me gusta agregado correctamente" });
@@ -74,7 +74,7 @@ const deleteLike = async (req, res) => {
 
         // Si no se encontró en Like, buscar y eliminar en el modelo NoLike
         if (!like) {
-            like = await NoLike.findOneAndDelete({ liked: publicationId, user: userId });
+            like = await NoLike.findOneAndDelete({ noliked: publicationId, user: userId });
             if (!like) {
                 return res.status(400).json({ status: "error", message: "El usuario no dio like o no me gusta a esta publicación" });
             }
@@ -87,10 +87,37 @@ const deleteLike = async (req, res) => {
     }
 }
 
+const listLikes = async (req, res) => {
+    try {
+        const publicationId = req.params.id;
+        console.log(publicationId)
+
+        // Buscar los likes que tiene la publicación utilizando el ID de la publicación
+        const likes = await Like.find({ liked: publicationId });
+        const Nolikes = await NoLike.find({ noliked: publicationId });
+
+        // Contar la cantidad de likes obtenidos
+        const likesCount = likes.length;
+        const nolikesCount = Nolikes.length
+
+        return res.status(200).json({ 
+            status: "success", 
+            likesCount, 
+            likes,
+            Nolikes,
+            nolikesCount
+         });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: "error", message: "Error al obtener los likes de la publicación" });
+    }
+}
+
 
 module.exports={
     pruebaLike,
     likePublication, 
     deleteLike,
-    unlike
+    unlike,
+    listLikes
 }

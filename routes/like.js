@@ -6,10 +6,11 @@ const check = require("../middlewares/auth")
 //definir rutas
 router.get("/prueba", LikeController.pruebaLike)
 
-router.post("/like/:id", check.auth, LikeController.likePublication)
+router.post("/megusta/:id", check.auth, LikeController.likePublication)
 router.post("/nolike/:id", check.auth, LikeController.unlike)
 router.delete("/unlike/:id", check.auth, LikeController.deleteLike)
 
+router.get("/listlikes/:id", check.auth, LikeController.listLikes);
 
 
 //exportar router

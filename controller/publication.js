@@ -78,24 +78,33 @@ const detail = (req, res) => {
 
 //eliminar publicaciones
 const remove = async (req, res) => {
-    //obtener id de la publicacion
-    const publicationId = req.params.id;
-
-    //buscar la publicacion comparando el id del usuario con el id de la publicacion y borrarlo
-
     try {
-        const publicaDelete = await Publication.findOneAndRemove({ "user": req.user.id, "_id": publicationId }).then((publicationId) => {
-            return res.status(200).json({
-                status: "success",
-                message: "La publicacion ha sido borrada..",
-                publications: publicationId
-            });
-        })
-    } catch (error) {
-        if (error || !publicationId) return res.status(500).send({ status: "error", message: "error al eliminar publicacion o no existen publicaciones" })
+        const publicationId = req.params.id;
+        const userId = req.user.id;
 
+        // Eliminar la publicación
+        const deletedPublication = await Publication.findOneAndRemove({ user: userId, _id: publicationId });
+
+        if (!deletedPublication) {
+            return res.status(404).json({ status: "error", message: "La publicación no fue encontrada o no tienes permisos para eliminarla" });
+        }
+
+        // Eliminar los likes asociados a la publicación
+        await Like.deleteMany({ liked: publicationId });
+
+        // Eliminar los no likes asociados a la publicación
+        await NoLike.deleteMany({ noliked: publicationId });
+
+        return res.status(200).json({
+            status: "success",
+            message: "La publicación y sus likes/no likes asociados han sido eliminados correctamente"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: "error", message: "Error al eliminar la publicación y sus likes/no likes asociados" });
     }
 }
+
 
 //listar publicaciones de un usuario
 const user = async (req, res) => {

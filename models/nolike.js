@@ -6,7 +6,7 @@ const NoLikeSchema = Schema ({
         type:Schema.ObjectId,
         ref:"User"
     },
-    liked:{
+    noliked:{
         type:Schema.ObjectId,
         ref:"publication"
     },
