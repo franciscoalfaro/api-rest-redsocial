@@ -82,6 +82,8 @@ const remove = async (req, res) => {
         const publicationId = req.params.id;
         const userId = req.user.id;
 
+        console.log(publicationId)
+
         // Eliminar la publicación
         const deletedPublication = await Publication.findOneAndRemove({ user: userId, _id: publicationId });
 
@@ -94,10 +96,13 @@ const remove = async (req, res) => {
 
         // Eliminar los no likes asociados a la publicación
         await NoLike.deleteMany({ noliked: publicationId });
+        
+        // Eliminar los comentarios asociados a la publicación
+        await Comments.deleteMany({ publication: publicationId });
 
         return res.status(200).json({
             status: "success",
-            message: "La publicación y sus likes/no likes asociados han sido eliminados correctamente"
+            message: "Publicacion con me gusta y no me gusta, junto con los comentarios fueron eliminados correctamente"
         });
     } catch (error) {
         console.error(error);
