@@ -87,18 +87,19 @@ const deleteLike = async (req, res) => {
     }
 }
 
+
+//se mejora end-point para popular informacion del usuario (nombre y apellido)
 const listLikes = async (req, res) => {
     try {
         const publicationId = req.params.id;
-        console.log(publicationId)
 
         // Buscar los likes que tiene la publicación utilizando el ID de la publicación
-        const likes = await Like.find({ liked: publicationId });
-        const Nolikes = await NoLike.find({ noliked: publicationId });
+        const likes = await Like.find({ liked: publicationId }).populate('user', 'name surname');
+        const Nolikes = await NoLike.find({ noliked: publicationId }).populate('user', 'name surname');
 
         // Contar la cantidad de likes obtenidos
         const likesCount = likes.length;
-        const nolikesCount = Nolikes.length
+        const nolikesCount = Nolikes.length;
 
         return res.status(200).json({ 
             status: "success", 
@@ -106,12 +107,13 @@ const listLikes = async (req, res) => {
             likes,
             Nolikes,
             nolikesCount
-         });
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ status: "error", message: "Error al obtener los likes de la publicación" });
     }
 }
+
 
 
 module.exports={
