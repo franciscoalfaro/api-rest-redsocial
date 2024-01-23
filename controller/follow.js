@@ -53,29 +53,38 @@ const save = (req, res) => {
 //accion dejar de seguir 
 
 const unfollow = async (req, res) => {
-    //recoger id del usuario identificado
-    const userId = req.user.id
-    console.log('el id',userId)
-
-    //recoger el id del usuario que sigo y dejar de seguir
-    const followedId = req.params.id
-    console.log(followedId)
-
-    //find del usuario que sigo y remover
     try {
-        const unfDelete = await Follow.findOneAndRemove({ "user": userId }, { "followed": followedId }).then((followStored) => {
+        // Recoger id del usuario identificado
+        const userId = req.user.id;
+        
+        // Recoger el id del usuario que quiero dejar de seguir
+        const followedId = req.params.id;
+       
+        // Buscar y eliminar el seguimiento
+        const follow = await Follow.findOneAndRemove({ user: userId, followed: followedId });
+
+        if (follow) {
             return res.status(200).json({
                 status: "success",
-                message: "has dejado de seguir al usuario",
-                followStored,
+                message: "Has dejado de seguir al usuario",
+                follow,
                 identity: req.user
             });
-        })
+        } else {
+            return res.status(404).json({
+                status: "error",
+                message: "No se encontró el seguimiento para dejar de seguir"
+            });
+        }
     } catch (error) {
-        if (error || !followDeleted) return res.status(500).send({ status: "error", message: "error al dejar de seguir" })
-
+        console.error('Error al dejar de seguir:', error);
+        return res.status(500).json({
+            status: "error",
+            message: "Error al dejar de seguir al usuario"
+        });
     }
-}
+};
+
 //accion de listado que cualquier usuarios esta siguiendo(siguiendo)
 const following = async (req, res) => {
     //sacar el id del usuario identificado
