@@ -2,10 +2,10 @@
   "name": "api-rest-redsocial",
   "version": "1.0.0",
   "description": "api red social, con mongo, express jwt",
-  "main": "index.js",
+  "main": "social.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon social.js"
   },
   "author": "Francisco Alfaro",
   "license": "MIT",
