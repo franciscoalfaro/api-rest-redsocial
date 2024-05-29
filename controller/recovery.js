@@ -59,7 +59,7 @@ async function enviarCorreoRecuperacion(email, nuevaContrasena) {
     const emailUser = process.env.EMAIL_USER;
     const emailPassword = process.env.EMAIL_PASSWORD;
     const transporter = nodemailer.createTransport({
-        host: 'smtp.ionos.com',
+        host: 'smtp.zoho.com',
         port: 587,
         secure: false,
         auth: {
@@ -69,7 +69,7 @@ async function enviarCorreoRecuperacion(email, nuevaContrasena) {
     });
 
     const mailOptions = {
-        from: 'suport@testsocial.org', // Cambia con tu dirección de correo de IONOS
+        from: 'contacto@franciscoalfaro.cl', // Cambia con tu dirección de correo de IONOS
         to: email,
         subject: 'Recuperación de Contraseña',
         text: `Tu nueva contraseña temporal es: ${nuevaContrasena}. Te recomendamos cambiarla una vez hayas iniciado sesión.`
